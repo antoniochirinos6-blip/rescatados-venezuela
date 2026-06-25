@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Registro de Rescatados — Venezuela</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff;
+    --bg2: #f5f5f3;
+    --bg3: #eeede9;
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #9a9a96;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --radius: 10px;
+    --radius-lg: 14px;
+    --info-bg: #E6F1FB; --info-text: #0C447C;
+    --success-bg: #EAF3DE; --success-text: #3B6D11;
+    --warn-bg: #FAEEDA; --warn-text: #633806;
+    --danger-bg: #FCEBEB; --danger-text: #A32D2D;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a; --bg2: #252523; --bg3: #2e2e2b;
+      --text: #f0efea; --text2: #a0a09b; --text3: #6a6a66;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.2);
+      --info-bg: #042C53; --info-text: #B5D4F4;
+      --success-bg: #173404; --success-text: #C0DD97;
+      --warn-bg: #412402; --warn-text: #FAC775;
+      --danger-bg: #501313; --danger-text: #F7C1C1;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); min-height: 100vh; padding: 1rem; }
+  .app { max-width: 680px; margin: 0 auto; }
+  header { text-align: center; padding: 1.5rem 0 1rem; }
+  header h1 { font-size: 22px; font-weight: 600; }
+  header p { font-size: 14px; color: var(--text2); margin-top: 4px; }
+  .tabs { display: flex; background: var(--bg2); border-radius: var(--radius-lg); padding: 4px; gap: 4px; margin-bottom: 1.25rem; }
+  .tab { flex: 1; padding: 9px; text-align: center; font-size: 14px; cursor: pointer; border: none; background: none; color: var(--text2); border-radius: var(--radius); transition: all 0.15s; font-weight: 500; }
+  .tab.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
+  label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 5px; margin-top: 13px; }
+  label:first-child { margin-top: 0; }
+  input, select, textarea { width: 100%; padding: 9px 12px; font-size: 14px; border: 0.5px solid var(--border); border-radius: var(--radius); background: var(--bg2); color: var(--text); font-family: inherit; transition: border-color 0.15s; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--border2); }
+  .btn { padding: 9px 18px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: none; color: var(--text); font-size: 14px; cursor: pointer; transition: background 0.12s; font-family: inherit; font-weight: 500; }
+  .btn:hover { background: var(--bg2); }
+  .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-danger { color: var(--danger-text); border-color: var(--danger-bg); }
+  .btn-danger:hover { background: var(--danger-bg); }
+  .row { display: flex; gap: 8px; margin-top: 14px; align-items: center; }
+  .badge { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 99px; font-weight: 600; white-space: nowrap; }
+  .badge-info { background: var(--info-bg); color: var(--info-text); }
+  .badge-success { background: var(--success-bg); color: var(--success-text); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn-text); }
+  .badge-danger { background: var(--danger-bg); color: var(--danger-text); }
+  .badge-gray { background: var(--bg3); color: var(--text2); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+  .stat { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 12px 14px; }
+  .stat .num { font-size: 24px; font-weight: 600; }
+  .stat .lbl { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .search-wrap { position: relative; margin-bottom: 1rem; }
+  .search-wrap input { padding-left: 38px; font-size: 15px; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 15px; pointer-events: none; }
+  .result-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .result-card .name { font-size: 16px; font-weight: 600; }
+  .result-card .detail { font-size: 13px; color: var(--text2); margin-top: 3px; }
+  .hospital-tag { font-size: 13px; color: var(--info-text); margin-top: 6px; font-weight: 500; }
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
+  .empty .icon { font-size: 36px; margin-bottom: 10px; }
+  .section-title { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; }
+  .hosp-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 0.5px solid var(--border); font-size: 14px; gap: 8px; }
+  .hosp-item:last-child { border-bottom: none; }
+  .alert { padding: 10px 14px; border-radius: var(--radius); font-size: 13px; margin-bottom: 12px; font-weight: 500; }
+  .alert-success { background: var(--success-bg); color: var(--success-text); }
+  .alert-error { background: var(--danger-bg); color: var(--danger-text); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .admin-gate-wrap { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 1.5rem; text-align: center; max-width: 360px; margin: 0 auto; }
+  .admin-gate-wrap h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .admin-gate-wrap p { font-size: 13px; color: var(--text2); margin-bottom: 18px; }
+  .pw-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .pw-row input { flex: 1; }
+  .hint { font-size: 12px; color: var(--text3); margin-top: 8px; }
+  .emergency-banner { background: var(--danger-bg); border: 0.5px solid var(--danger-text); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 1rem; font-size: 13px; color: var(--danger-text); text-align: center; font-weight: 500; }
+  @media (max-width: 500px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stats .stat:last-child { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div style="font-size:32px; margin-bottom:6px;">🆘</div>
+    <h1>Registro de Rescatados</h1>
+    <p>Terremoto Venezuela — Herramienta de búsqueda de pacientes</p>
+  </header>
+
+  <div class="emergency-banner">
+    ⚠️ Esta herramienta es de uso informativo. En emergencias llama al <strong>911</strong> o <strong>Protección Civil</strong>.
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('buscar', this)">🔍 Buscar persona</button>
+    <button class="tab" onclick="switchTab('admin', this)">🔐 Administrador</button>
+  </div>
+
+  <!-- PANEL BÚSQUEDA PÚBLICA -->
+  <div id="panel-buscar" class="panel active">
+    <div class="stats">
+      <div class="stat"><div class="num" id="stat-total">—</div><div class="lbl">Personas registradas</div></div>
+      <div class="stat"><div class="num" id="stat-hosp">—</div><div class="lbl">Hospitales activos</div></div>
+      <div class="stat"><div class="num" id="stat-hora">—</div><div class="lbl">Última actualización</div></div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="search" id="search-input" placeholder="Buscar por nombre o cédula..." oninput="buscar()" autocomplete="off" />
+    </div>
+    <div id="resultados">
+      <div class="empty"><div class="icon">👤</div>Ingresa un nombre o número de cédula para buscar</div>
+    </div>
+  </div>
+
+  <!-- PANEL ADMIN -->
+  <div id="panel-admin" class="panel">
+
+    <div id="admin-gate">
+      <div class="admin-gate-wrap">
+        <div style="font-size:36px; margin-bottom:12px;">🔐</div>
+        <h3>Acceso de administrador</h3>
+        <p>Ingresa la contraseña para gestionar el registro</p>
+        <div class="pw-row">
+          <input type="password" id="pw-input" placeholder="Contraseña" onkeydown="if(event.key==='Enter') verificarPW()" />
+          <button class="btn btn-primary" onclick="verificarPW()">Entrar</button>
+        </div>
+        <div id="pw-error" style="color:var(--danger-text); font-size:13px; min-height:18px; margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <div id="admin-panel" style="display:none;">
+      <div id="admin-alert"></div>
+
+      <!-- Hospitales -->
+      <div class="card">
+        <p class="section-title">🏥 Hospitales y centros médicos</p>
+        <div id="hosp-list"></div>
+        <div style="display:flex; gap:8px; margin-top:14px;">
+          <input type="text" id="nuevo-hosp" placeholder="Nombre del hospital o centro de atención" style="flex:1;" onkeydown="if(event.key==='Enter') agregarHospital()" />
+          <button class="btn btn-primary" onclick="agregarHospital()">+ Agregar</button>
+        </div>
+      </div>
+
+      <!-- Registrar paciente -->
+      <div class="card">
+        <p class="section-title">➕ Registrar persona rescatada</p>
+        <div class="grid2">
+          <div>
+            <label>Nombre completo *</label>
+            <input type="text" id="p-nombre" placeholder="Ej: María González Pérez" />
+          </div>
+          <div>
+            <label>Cédula de identidad *</label>
+            <input type="text" id="p-cedula" placeholder="Ej: V-12345678" />
+          </div>
+        </div>
+        <div class="grid2">
+          <div>
+            <label>Hospital / Centro médico *</label>
+            <select id="p-hospital">
+              <option value="">— Seleccionar —</option>
+            </select>
+          </div>
+          <div>
+            <label>Estado del paciente</label>
+            <select id="p-estado">
+              <option value="Estable">Estable</option>
+              <option value="Crítico">Crítico</option>
+              <option value="En observación">En observación</option>
+              <option value="Dado de alta">Dado de alta</option>
+              <option value="Sin identificar">Sin identificar</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label>Notas adicionales (opcional)</label>
+          <textarea id="p-notas" rows="2" placeholder="Ej: Piso 2, sala de emergencias — fracturas en pierna derecha"></textarea>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary" onclick="registrarPaciente()">✓ Registrar persona</button>
+        </div>
+      </div>
+
+      <!-- Lista de registrados -->
+      <div class="card">
+        <p class="section-title">📋 Personas registradas (<span id="count-pac">0</span>)</p>
+        <div id="admin-lista"></div>
+      </div>
+
+      <div style="text-align:right; padding-bottom:2rem;">
+        <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PASS = 'RescateVenezuela2408@';
+const STORAGE_KEY = 'rescatados_vzla_v1';
+
+function cargarDatos() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { hospitales: [], pacientes: [] };
+  } catch(e) { return { hospitales: [], pacientes: [] }; }
+}
+
+function guardarDatos(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  if (tab === 'buscar') actualizarStats();
+}
+
+function badgeEstado(estado) {
+  const map = {
+    'Estable': 'badge-success',
+    'Dado de alta': 'badge-success',
+    'Crítico': 'badge-danger',
+    'En observación': 'badge-warn',
+    'Sin identificar': 'badge-gray',
+  };
+  return `<span class="badge ${map[estado] || 'badge-info'}">${estado}</span>`;
+}
+
+function buscar() {
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  const cont = document.getElementById('resultados');
+  if (!q) {
+    cont.innerHTML = '<div class="empty"><div class="icon">👤</div>Ingresa un nombre o número de cédula para buscar</div>';
+    return;
+  }
+  const data = cargarDatos();
+  const found = data.pacientes.filter(p =>
+    p.nombre.toLowerCase().includes(q) ||
+    p.cedula.toLowerCase().replace(/[-. ]/g,'').includes(q.replace(/[-. ]/g,''))
+  );
+  if (!found.length) {
+    cont.innerHTML = `<div class="empty"><div class="icon">😔</div>No se encontraron resultados para "<strong>${q}</strong>"<br><span style="font-size:12px; margin-top:6px; display:block;">Si acabas de ser informado y no aparece aún, la información puede estar en proceso de registro.</span></div>`;
+    return;
+  }
+  cont.innerHTML = found.map(p => `
+    <div class="result-card">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
+        <div style="flex:1; min-width:0;">
+          <div class="name">${p.nombre}</div>
+          <div class="detail">Cédula: <strong>${p.cedula}</strong></div>
+          <div class="hospital-tag">🏥 ${p.hospital}</div>
+          ${p.notas ? `<div class="detail" style="margin-top:6px; font-style:italic;">${p.notas}</div>` : ''}
+        </div>
+        <div>${badgeEstado(p.estado)}</div>
+      </div>
+      <div class="detail" style="margin-top:8px; font-size:12px; color:var(--text3);">Registrado: ${p.fecha}</div>
+    </div>
+  `).join('');
+}
+
+function actualizarStats() {
+  const data = cargarDatos();
+  document.getElementById('stat-total').textContent = data.pacientes.length;
+  document.getElementById('stat-hosp').textContent = data.hospitales.length;
+  if (data.pacientes.length > 0) {
+    const last = data.pacientes[data.pacientes.length - 1];
+    document.getElementById('stat-hora').textContent = last.fecha.split(' ')[0];
+  } else {
+    document.getElementById('stat-hora').textContent = '—';
+  }
+}
+
+function verificarPW() {
+  const val = document.getElementById('pw-input').value;
+  if (val === PASS) {
+    document.getElementById('admin-gate').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    renderAdminPanel();
+  } else {
+    document.getElementById('pw-error').textContent = 'Contraseña incorrecta. Intenta de nuevo.';
+    document.getElementById('pw-input').value = '';
+    setTimeout(() => document.getElementById('pw-error').textContent = '', 3000);
+  }
+}
+
+function renderAdminPanel() {
+  const data = cargarDatos();
+  renderHospList(data);
+  renderPacientesList(data);
+  actualizarSelectHospital(data);
+}
+
+function renderHospList(data) {
+  const el = document.getElementById('hosp-list');
+  if (!data.hospitales.length) {
+    el.innerHTML = '<div style="font-size:13px; color:var(--text3); padding:8px 0;">Sin hospitales registrados aún</div>';
+    return;
+  }
+  el.innerHTML = data.hospitales.map((h, i) => `
+    <div class="hosp-item">
+      <span>🏥 ${h}</span>
+      <button class="btn btn-danger btn-sm" onclick="eliminarHospital(${i})">Eliminar</button>
+    </div>
+  `).join('');
+}
+
+function actualizarSelectHospital(data) {
+  const sel = document.getElementById('p-hospital');
+  sel.innerHTML = '<option value="">— Seleccionar hospital —</option>' +
+    data.hospitales.map(h => `<option value="${h}">${h}</option>`).join('');
+}
+
+function renderPacientesList(data) {
+  const el = document.getElementById('admin-lista');
+  document.getElementById('count-pac').textContent = data.pacientes.length;
+  if (!data.pacientes.length) {
+    el.innerHTML = '<div style="font-size:13px; color:var(--text3); padding:8px 0;">Sin personas registradas aún</div>';
+    return;
+  }
+  el.innerHTML = data.pacientes.slice().reverse().map((p, ri) => {
+    const i = data.pacientes.length - 1 - ri;
+    return `
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:10px 0; border-bottom:0.5px solid var(--border);">
+      <div style="flex:1; min-width:0;">
+        <div style="font-weight:600; font-size:14px;">${p.nombre}</div>
+        <div style="font-size:13px; color:var(--text2);">CI: ${p.cedula} · ${p.hospital}</div>
+        ${p.notas ? `<div style="font-size:12px; color:var(--text3); font-style:italic;">${p.notas}</div>` : ''}
+        <div style="font-size:11px; color:var(--text3); margin-top:3px;">${p.fecha}</div>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+        ${badgeEstado(p.estado)}
+        <button class="btn btn-danger btn-sm" onclick="eliminarPaciente(${i})">Eliminar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function agregarHospital() {
+  const val = document.getElementById('nuevo-hosp').value.trim();
+  if (!val) return;
+  const data = cargarDatos();
+  if (data.hospitales.map(h => h.toLowerCase()).includes(val.toLowerCase())) {
+    mostrarAlerta('Ese hospital ya está registrado', 'error'); return;
+  }
+  data.hospitales.push(val);
+  guardarDatos(data);
+  document.getElementById('nuevo-hosp').value = '';
+  renderHospList(data);
+  actualizarSelectHospital(data);
+  mostrarAlerta('Hospital agregado: ' + val, 'success');
+}
+
+function eliminarHospital(i) {
+  if (!confirm('¿Eliminar este hospital del listado?')) return;
+  const data = cargarDatos();
+  data.hospitales.splice(i, 1);
+  guardarDatos(data);
+  renderHospList(data);
+  actualizarSelectHospital(data);
+}
+
+function registrarPaciente() {
+  const nombre = document.getElementById('p-nombre').value.trim();
+  const cedula = document.getElementById('p-cedula').value.trim();
+  const hospital = document.getElementById('p-hospital').value;
+  const estado = document.getElementById('p-estado').value;
+  const notas = document.getElementById('p-notas').value.trim();
+  if (!nombre || !cedula || !hospital) {
+    mostrarAlerta('Por favor completa nombre, cédula y hospital', 'error'); return;
+  }
+  const data = cargarDatos();
+  const now = new Date();
+  const fecha = now.toLocaleDateString('es-VE', { day:'2-digit', month:'2-digit', year:'numeric' }) +
+    ' ' + now.toLocaleTimeString('es-VE', { hour:'2-digit', minute:'2-digit' });
+  data.pacientes.push({ nombre, cedula, hospital, estado, notas, fecha });
+  guardarDatos(data);
+  document.getElementById('p-nombre').value = '';
+  document.getElementById('p-cedula').value = '';
+  document.getElementById('p-notas').value = '';
+  document.getElementById('p-hospital').value = '';
+  renderPacientesList(data);
+  actualizarStats();
+  mostrarAlerta('✓ ' + nombre + ' registrado/a correctamente', 'success');
+}
+
+function eliminarPaciente(i) {
+  if (!confirm('¿Eliminar este registro de forma permanente?')) return;
+  const data = cargarDatos();
+  data.pacientes.splice(i, 1);
+  guardarDatos(data);
+  renderPacientesList(data);
+  actualizarStats();
+}
+
+function mostrarAlerta(msg, tipo) {
+  const el = document.getElementById('admin-alert');
+  el.innerHTML = `<div class="alert alert-${tipo}">${msg}</div>`;
+  setTimeout(() => el.innerHTML = '', 3500);
+}
+
+function cerrarSesion() {
+  document.getElementById('admin-gate').style.display = 'block';
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('pw-input').value = '';
+}
+
+actualizarStats();
+</script>
+</body>
+</html>
