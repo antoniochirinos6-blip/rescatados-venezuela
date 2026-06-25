@@ -475,10 +475,13 @@ window.registrarPaciente = async function() {
     mostrarAlerta('Por favor completa nombre, cédula y hospital', 'error'); return;
   }
   const cedulaNorm = cedula.toLowerCase().replace(/[-. ]/g,'');
-  const duplicado = pacientesCache.find(p => (p.cedula||'').toLowerCase().replace(/[-. ]/g,'') === cedulaNorm);
-  if (duplicado) {
-    mostrarAlerta('⚠️ Ya existe un registro con la cédula ' + cedula + ' — ' + duplicado.nombre + ' en ' + duplicado.hospital, 'error');
-    return;
+  const sinInfo = ['sininformacion','sininfo','sin informacion','sin información','sininformación'].includes(cedulaNorm);
+  if (!sinInfo) {
+    const duplicado = pacientesCache.find(p => (p.cedula||'').toLowerCase().replace(/[-. ]/g,'') === cedulaNorm);
+    if (duplicado) {
+      mostrarAlerta('⚠️ Ya existe un registro con la cédula ' + cedula + ' — ' + duplicado.nombre + ' en ' + duplicado.hospital, 'error');
+      return;
+    }
   }
   const now = new Date();
   const fecha = now.toLocaleDateString('es-VE', { day:'2-digit', month:'2-digit', year:'numeric' }) +
