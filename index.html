@@ -121,6 +121,10 @@
     ⚠️ Herramienta informativa. En emergencias llama al <strong>911</strong> o <strong>Protección Civil</strong>.
   </div>
 
+  <div style="background:var(--bg); border:0.5px solid var(--border); border-radius:var(--radius-lg); padding:1rem 1.25rem; margin-bottom:1.25rem; font-size:13px; color:var(--text2); line-height:1.6;">
+    ⚠️ <strong>Información NO VERIFICADA.</strong> Estamos tomando las listas publicadas en redes sociales para facilitar la búsqueda. De corazón esperamos que les sea de gran utilidad. Seguiremos actualizando.
+  </div>
+
   <!-- BÚSQUEDA PÚBLICA -->
   <div id="panel-buscar" class="panel active">
     <div class="stats">
@@ -212,6 +216,10 @@
       <!-- Lista -->
       <div class="card">
         <p class="section-title">📋 Personas registradas (<span id="count-pac">0</span>)</p>
+        <div class="search-wrap" style="margin-bottom:1rem;">
+          <span class="search-icon">🔍</span>
+          <input type="search" id="admin-search" placeholder="Filtrar por nombre o cédula..." oninput="filtrarAdmin()" autocomplete="off" />
+        </div>
         <div id="admin-lista"><div class="loading">Cargando...</div></div>
       </div>
 
@@ -416,14 +424,24 @@ function actualizarSelectHospital(selId) {
     hospitalesCache.map(h => `<option value="${h.nombre}" ${h.nombre===current?'selected':''}>${h.nombre}</option>`).join('');
 }
 
-function renderPacientesList() {
+window.filtrarAdmin = function() {
+  const q = document.getElementById('admin-search').value.trim().toLowerCase();
+  const filtrados = q ? pacientesCache.filter(p =>
+    (p.nombre||'').toLowerCase().includes(q) ||
+    (p.cedula||'').toLowerCase().replace(/[-. ]/g,'').includes(q.replace(/[-. ]/g,''))
+  ) : pacientesCache;
+  renderPacientesList(filtrados);
+};
+
+function renderPacientesList(lista) {
+  lista = lista || pacientesCache;
   const el = document.getElementById('admin-lista');
   document.getElementById('count-pac').textContent = pacientesCache.length;
-  if (!pacientesCache.length) {
-    el.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:8px 0;">Sin personas registradas aún</div>';
+  if (!lista.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:8px 0;">Sin resultados</div>';
     return;
   }
-  el.innerHTML = pacientesCache.map(p => `
+  el.innerHTML = lista.map(p => `
     <div class="pac-item">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
         <div style="flex:1;min-width:0;">
